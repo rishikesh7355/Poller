@@ -1,10 +1,39 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import (
-    ListView
+    ListView,
+    DetailView,
+    FormView
 )
-from main import models
+from django.views.generic.detail import BaseDetailView
+#mixin dont handle views jus overwrites the sigleobject data
+from main import models, forms
 # Create your views here.
 
 class Index(ListView):
  model = models.Question
  template_name = 'main/index.html'
+
+class Question(BaseDetailView,FormView):
+  model = models.Question
+  template_name = 'main/components/question.html'
+  form_class = forms.AnswerForm
+  
+
+  def form_valid(self,form):
+     obj = form.save(commit = False)
+     obj.question = self.get_object()
+     obj.user = self.request.user
+     obj.user = self.request.user
+     obj.save()
+
+     return HttpResponseRedirect('/')
+
+  def post(self, request ,*args,**kwargs):
+      self.object = self.get_object()
+      return super().post(request , *args, **kwargs)   
+
+  def get(self, request,*args, **kwargs):
+     self.object = self.get_object()
+     context = self.get_context_data(object=self.object)
+     return self.render_to_response(context)
