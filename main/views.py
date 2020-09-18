@@ -18,7 +18,13 @@ class Question(BaseDetailView,FormView):
   model = models.Question
   template_name = 'main/components/question.html'
   form_class = forms.AnswerForm
-  
+
+  def get_context_data(self,**kwargs):
+      data = super().get_context_data(**kwargs)
+      data['answer'] = models.Answer.objects.get(
+          question = self.get_object(),
+          user = self.request.user
+      )  
 
   def form_valid(self,form):
      obj = form.save(commit = False)
