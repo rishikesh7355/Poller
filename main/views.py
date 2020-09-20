@@ -6,6 +6,7 @@ from django.views.generic import (
     FormView
 )
 from django.views.generic.detail import BaseDetailView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 #mixin dont handle views jus overwrites the sigleobject data
 from main import models, forms
 # Create your views here.
@@ -14,18 +15,20 @@ class Index(ListView):
  model = models.Question
  template_name = 'main/index.html'
 
-class Question(BaseDetailView,FormView):
+class Question(PermissionRequiredMixin, BaseDetailView,FormView):
   model = models.Question
   template_name = 'main/components/question.html'
   form_class = forms.AnswerForm
-
+  permission_required = 'add_answer'
+#adding anwers to generic views
   def get_context_data(self,**kwargs):
       data = super().get_context_data(**kwargs)
       data['answer'] = models.Answer.objects.get(
           question = self.get_object(),
           user = self.request.user
       )  
-
+      return data
+#adding funcionality of current logged in users
   def form_valid(self,form):
      obj = form.save(commit = False)
      obj.question = self.get_object()

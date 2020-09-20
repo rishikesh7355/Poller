@@ -18,9 +18,9 @@ class Choice(models.Model):
     question = models.ForeignKey('Question',on_delete = models.CASCADE)
     content = models.CharField(max_length = 256)
 
-    @property
+    @property #property decorator we need not to call the function
     def answer_count(self):
-        count = Answer.objects.filter(
+            return Answer.objects.filter(
             question=self.question,
             choice = self
             ).count()

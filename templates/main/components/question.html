@@ -11,13 +11,14 @@
 
 <form action="" method="POST">
   {% csrf_token %}  
+
   <div class="row">
       <div class="col-6">
           <div class="collection">
             {% for choice in question.choice_set.all %}
              <div class="collection-item"> 
                {% if answer %}
-                  {{choice.content}} {{choice.answer_count}}
+                  {{choice.content}} ({{choice.answer_count}})
                   {% if answer.choice.id == choice.id %}
                     <i class="material-icons">check</i>
                   {% endif %}
@@ -41,7 +42,7 @@
    </div>
  {% endif %} 
 
-<div class="row">
+ <div class="row">
     <p class="red">
       <ul> 
         {% for error in form.error %}
@@ -51,7 +52,7 @@
         {% endfor %}  
       </ul>
     </p>
-</div>
+ </div>
 </form> 
 </div>
 
